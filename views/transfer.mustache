@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="site.css">
+</head>
+
+<body>
+    <div id="menu">
+        <div id="left">
+            <p>XSS Test Bank Site</p>
+        </div>
+        <div id="right">
+            <a href="/">Home</a>
+            <a href="/logout">Sign Out</a>
+        </div>
+    </div>
+    <div id="content">
+        <div id="centered">
+
+            <h1>Welcome {{{name}}}</h1>
+            Current balance: ${{balance}}
+            <br /><br />
+            Transfer money<br />
+            <form method="POST" action="/transfer">
+                <div>
+                    <label for="to">To</label><br />
+                    <input class="form-input" type="text" id="to" name="to"
+                        autofocus />
+                </div>
+
+                <div>
+                    <label for="amount">Amount</label><br />
+                    <input class="form-input" type="text" id="amount"
+                        name="amount" />
+                </div>
+
+                <br />
+                <input class="btn" type="submit" value="Transfer" />
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

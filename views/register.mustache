@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="site.css">
+</head>
+
+<body>
+    <div id="menu">
+        <div id="left">
+            <p>XSS Test Bank Site</p>
+        </div>
+        <div id="right">
+            <a href="/">Home</a>
+        </div>
+    </div>
+    <div id="content">
+        <div id="centered">
+            <h1>Register</h1>
+
+            <form action="/register" method="POST">
+                <div>
+                    <label for="name">Username</label><br />
+                    <input class="form-input" type="text" id="name" name="name"
+                        autofocus />
+                </div>
+
+                <div>
+                    <label for="password">Password</label><br />
+                    <input class="form-input" type="text" id="password"
+                        name="password" />
+                </div>
+
+                <br />
+                <input class="btn" type="submit" value="Register" />
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

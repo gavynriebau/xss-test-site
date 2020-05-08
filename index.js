@@ -1,28 +1,30 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
+var mustacheExpress = require("mustache-express");
+
 const { v4: uuidv4 } = require("uuid");
 
 var app = express();
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static("public"));
+
+app.engine("mustache", mustacheExpress());
+app.set("view engine", "mustache");
+app.set("views", __dirname + "/views");
 
 let users = [
   {
     name: "alice",
     password: "password123",
-    balance: 600,
+    balance: 60250,
   },
   {
     name: "eve",
-    password: "blah",
-    balance: 50,
-  },
-  {
-    name: "bob",
-    password: "meh",
-    balance: 120,
+    password: "123456",
+    balance: 20,
   },
 ];
 
@@ -30,26 +32,21 @@ let sessions = {};
 
 app.get("/", (req, res) => {
   let source = req.query.source;
-  let welcome = source ? `Welcome ${source} reader` : "Welcome to the bank";
-  res.send(`
-        <h1>${welcome}</h1>
-        <a href="/login">Click here to login</a>
-    `);
+  let title = source
+    ? `Welcome ${source} member`
+    : "Welcome to the insecure bank";
+  let loggedIn = req.cookies["sessionId"] !== undefined;
+
+  res.render("welcome", {
+    title,
+    loggedIn,
+  });
 });
 
 app.get("/login", (req, res) => {
-  let sessionId = req.cookies["sessionId"];
-  if (!sessionId) {
-    res.send(`
-    <h1>Login</h1>
-    <form method="POST" action="/login">
-        Name
-        <input type="text" name="name" />
-        Password
-        <input type="password" name="password" />
-        <input type="submit" value="Login" />
-    </form>
-    `);
+  let loggedIn = req.cookies["sessionId"] !== undefined;
+  if (!loggedIn) {
+    res.render("login");
   } else {
     res.redirect("/transfer");
   }
@@ -70,29 +67,21 @@ app.post("/login", (req, res) => {
 
 app.get("/logout", (req, res) => {
   res.clearCookie("sessionId");
-  res.redirect("/");
+  res.redirect("/login");
 });
 
 app.get("/transfer", (req, res) => {
   let sessionId = req.cookies["sessionId"];
   let user = sessions[sessionId];
   if (!user) {
-    res.send("Not logged in");
+    res.clearCookie("sessionId");
+    res.redirect("/login");
     return;
   }
-  res.send(`
-    <h1>Welcome ${user.name}</h1>
-    Current balance: ${user.balance}
-    <br /><br />
-    Transfer money<br />
-    <form method="POST" action="transfer">
-        to:
-        <input type="text" name="to" />
-        amount:
-        <input type="text" name="amount" />
-        <input type="submit" value="Transfer" />
-    </form>
-    `);
+  res.render("transfer", {
+    name: user.name,
+    balance: user.balance,
+  });
 });
 
 app.post("/transfer", (req, res) => {
@@ -110,26 +99,23 @@ app.post("/transfer", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.send(`
-    <form action="/register" method="POST">
-        <h1>Register</h1>
-        Username
-        <input type="text" name="name" />
-        Password
-        <input type="text" name="password" />
-        <input type="submit" value="Register" />
-    </form>
-    `);
+  res.render("register");
 });
 
 app.post("/register", (req, res) => {
   const { name, password } = req.body;
-  users.push({
+  let user = {
     name,
     password,
-    balance: 0,
-  });
-  res.redirect("/");
+    balance: 100, // free money!
+  };
+  users.push(user);
+
+  let sessionId = uuidv4();
+  sessions[sessionId] = user;
+  res.cookie("sessionId", sessionId);
+
+  res.redirect("/transfer");
 });
 
 app.listen(4000, "127.0.0.1");

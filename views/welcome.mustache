@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="site.css">
+</head>
+
+<body>
+    <div id="menu">
+        <div id="left">
+            <p>XSS Test Bank Site</p>
+        </div>
+        <div id="right">
+            {{#loggedIn}}
+            <a href="/logout">Sign Out</a>
+            {{/loggedIn}}
+            {{^loggedIn}}
+            <a href="/login">Sign In</a>
+            {{/loggedIn}}
+        </div>
+    </div>
+    <div id="content">
+        <div id="centered">
+            <h1 id="welcome-text">{{{title}}}</h1>
+            <p>This is a test site to practice XSS attacks, try settings a
+                "?source=VALUE" query string parameter</p>
+            {{#loggedIn}}
+            <a class="btn" href="/transfer">My account</a>
+            {{/loggedIn}}
+            {{^loggedIn}}
+            <a class="btn" href="/login">Login</a>
+            <a class="btn" href="/register">Register</a>
+            {{/loggedIn}}
+        </div>
+    </div>
+</body>
+
+</html>

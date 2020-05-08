@@ -5,5 +5,5 @@ RUN npm install --silent
 COPY . /app
 
 ENV NODE_ENV=production
-EXPOSE 4000
+EXPOSE 80
 CMD ["node", "index.js"]

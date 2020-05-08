@@ -120,6 +120,8 @@ app.post("/register", (req, res) => {
   res.redirect("/transfer");
 });
 
-const bindAddress = environment === "development" ? "127.0.0.1" : "0.0.0.0";
-
-app.listen(4000, bindAddress);
+if (environment === "development") {
+  app.listen(4000, "127.0.0.1");
+} else {
+  app.listen(80, "0.0.0.0");
+}

@@ -7,6 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 
 var app = express();
 
+var environment = app.get("env");
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static("public"));
@@ -118,4 +120,6 @@ app.post("/register", (req, res) => {
   res.redirect("/transfer");
 });
 
-app.listen(4000, "127.0.0.1");
+const bindAddress = environment === "development" ? "127.0.0.1" : "0.0.0.0";
+
+app.listen(4000, bindAddress);

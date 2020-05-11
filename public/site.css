@@ -51,7 +51,7 @@ body {
 #centered {
   text-align: center;
   color: white;
-  margin-bottom: 8rem;
+  margin: 0 1rem 8rem 1rem;
 }
 
 #centered > * {

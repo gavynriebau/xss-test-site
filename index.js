@@ -1,13 +1,13 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser");
-var mustacheExpress = require("mustache-express");
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const mustacheExpress = require("mustache-express");
 
 const { v4: uuidv4 } = require("uuid");
 
-var app = express();
+const app = express();
 
-var environment = app.get("env");
+const environment = app.get("env");
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -32,22 +32,31 @@ let users = [
 
 let sessions = {};
 
+const isLoggedIn = (req) => req.cookies["sessionId"] !== undefined;
+
+const login = (res, user) => {
+  let sessionId = uuidv4();
+  sessions[sessionId] = user;
+  res.cookie("sessionId", sessionId, {
+    httpOnly: true,
+    sameSite: "strict",
+  });
+};
+
 app.get("/", (req, res) => {
-  let source = req.query.source;
-  let title = source
+  const source = req.query.source;
+  const title = source
     ? `Welcome ${source} member`
     : "Welcome to the insecure bank";
-  let loggedIn = req.cookies["sessionId"] !== undefined;
 
   res.render("welcome", {
     title,
-    loggedIn,
+    loggedIn: isLoggedIn(req),
   });
 });
 
 app.get("/login", (req, res) => {
-  let loggedIn = req.cookies["sessionId"] !== undefined;
-  if (!loggedIn) {
+  if (!isLoggedIn(req)) {
     res.render("login");
   } else {
     res.redirect("/transfer");
@@ -61,9 +70,7 @@ app.post("/login", (req, res) => {
     res.send("Invalid username or password");
     return;
   }
-  let sessionId = uuidv4();
-  sessions[sessionId] = user;
-  res.cookie("sessionId", sessionId);
+  login(res, user);
   res.redirect("/transfer");
 });
 
@@ -112,10 +119,7 @@ app.post("/register", (req, res) => {
     balance: 100, // free money!
   };
   users.push(user);
-
-  let sessionId = uuidv4();
-  sessions[sessionId] = user;
-  res.cookie("sessionId", sessionId);
+  login(res, user);
 
   res.redirect("/transfer");
 });

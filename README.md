@@ -2,7 +2,7 @@
 
 **https://xss-test-site.azurewebsites.net/**
 
-This is a micro site, simulating a very very bad bank for the purpose of learning about and practising cross site scripting (XSS) exploits.
+This is a tiny site, simulating a very very bad bank for the purpose of learning about and practising cross site scripting (XSS) exploits.
 
 # It's time to play a game
 
